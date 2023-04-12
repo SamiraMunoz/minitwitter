@@ -1,7 +1,7 @@
 module Queries
   module Users
     class FetchUser < Queries::BaseQuery
-      type Types::UserType, null: false
+      type Objects::UserObject, null: false
       argument :id, ID, required: true
 
       def resolve(id:)
