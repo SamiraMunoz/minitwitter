@@ -9,5 +9,8 @@ module Types
 
     field :fetch_users, resolver: Queries::Users::FetchUsers
     field :fetch_user, resolver: Queries::Users::FetchUser
+
+    field :fetch_tweets, resolver: Queries::Tweets::FetchTweets
+    field :fetch_tweet, resolver: Queries::Tweets::FetchTweet
   end
 end
