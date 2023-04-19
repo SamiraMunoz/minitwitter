@@ -2,6 +2,17 @@ class MinitwitterSchema < GraphQL::Schema
   mutation(Types::MutationType)
   query(Types::QueryType)
 
+  use GraphqlDevise::SchemaPlugin.new(
+    query:            Types::QueryType,
+    mutation:         Types::MutationType,
+    resource_loaders: [
+      GraphqlDevise::ResourceLoader.new(User, authenticatable_type: Objects::UserObject, operations: {
+        login: GraphqlDevise::Mutations::Login,
+        logout: GraphqlDevise::Mutations::Logout
+      })
+    ]
+  )
+
   # For batch-loading (see https://graphql-ruby.org/dataloader/overview.html)
   use GraphQL::Dataloader
 

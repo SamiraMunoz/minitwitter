@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount_graphql_devise_for User, at: 'graphql_auth'
+  devise_for :users
   if Rails.env.development?
     mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "graphql#execute"
   end
