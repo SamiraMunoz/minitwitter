@@ -9,5 +9,6 @@ module Objects
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
     field :full_name, String, null: true
+    field :email, String, null: false
   end
 end

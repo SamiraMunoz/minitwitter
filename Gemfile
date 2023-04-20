@@ -39,6 +39,7 @@ gem "bootsnap", require: false
 gem 'devise', '~> 4.9', '>= 4.9.2'
 gem 'graphql', '~> 2.0', '>= 2.0.20'
 gem 'graphql_devise', '~> 1.2'
+gem 'jwt'
 gem 'omniauth', '~> 2.1', '>= 2.1.1'
 
 group :development, :test do
