@@ -6,10 +6,7 @@ class MinitwitterSchema < GraphQL::Schema
     query:            Types::QueryType,
     mutation:         Types::MutationType,
     resource_loaders: [
-      GraphqlDevise::ResourceLoader.new(User, authenticatable_type: Objects::UserObject, operations: {
-        login: GraphqlDevise::Mutations::Login,
-        logout: GraphqlDevise::Mutations::Logout
-      })
+      GraphqlDevise::ResourceLoader.new(User, authenticatable_type: Objects::UserObject)
     ]
   )
 
