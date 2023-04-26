@@ -336,3 +336,54 @@ Before starting with the CRUD you must create some files that will serve as the 
       }
     }
   ```
+
+
+## Pagination
+
+Add in your gemfile
+
+```bash
+  gem 'graphql-pagination'
+  gem 'kaminari-activerecord'
+```
+
+Usage example
+
+* Change your fetch_users.rb file by adding the page and limit argument.
+  ```bash
+    module Queries
+      module Users
+        class FetchUsers < Queries::BaseQuery
+
+          argument :page, Integer, required: false
+          argument :limit, Integer, required: false
+
+          type Objects::UserObject.collection_type, null: true
+
+          def resolve(page: nil, limit: nil)
+            User.all.order(created_at: :desc).page(page).per(limit)
+          end
+        end
+      end
+    end
+  ```
+* Test in grahpiql
+  ```bash
+    {
+      fetchUsers(page: 1, limit: 2) {
+        collection {
+          id
+          firstName
+          lastName
+          nickname
+          email
+        }
+        metadata {
+          totalPages
+          totalCount
+          currentPage
+          limitValue
+        }
+      }
+    }
+  ```
