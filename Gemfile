@@ -38,6 +38,7 @@ gem "bootsnap", require: false
 
 gem 'devise', '~> 4.9', '>= 4.9.2'
 gem 'graphql', '~> 2.0', '>= 2.0.20'
+gem 'graphql-batch', '~> 0.5.2'
 gem 'graphql_devise', '~> 1.2'
 gem 'graphql-pagination', '~> 2.1', '>= 2.1.1'
 gem 'jwt'

@@ -2,10 +2,13 @@ module Queries
   module Tweets
     class FetchTweets < Queries::BaseQuery
 
-      type [Objects::TweetObject], null: false
+      argument :page, Integer, required: false
+      argument :limit, Integer, required: false
 
-      def resolve
-        Tweet.all.order(created_at: :desc)
+      type Objects::TweetObject.collection_type, null: false
+
+      def resolve(page: nil, limit: nil)
+        Tweet.all.order(created_at: :desc).page(page).per(limit)
       end
     end
   end

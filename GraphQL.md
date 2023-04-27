@@ -387,3 +387,53 @@ Usage example
       }
     }
   ```
+
+## Solve N+1
+
+Add in your gemfile
+
+```bash
+  gem 'graphql-batch'
+```
+
+Implementation
+
+1. Require the library in your graphql schema `require 'graphql/batch'`.
+2. Add `use GraphQL::Batch` in your graphql schema.
+  ```bash
+    class MySchema < GraphQL::Schema
+      query MyQueryType
+      mutation MyMutationType
+
+      use GraphQL::Batch
+    end
+  ```
+3. Create a custom loader in the graphql folder with name record_loader.rb and add:
+  ```bash
+    class RecordLoader < GraphQL::Batch::Loader
+      def initialize(model)
+        @model = model
+      end
+
+      def perform(ids)
+        @model.where(id: ids).each { |record| fulfill(record.id, record) }
+        ids.each { |id| fulfill(id, nil) unless fulfilled?(id) }
+      end
+    end
+  ```
+4. Use the loader in your objects to load them by passing the object id as parameter.
+  ```bash
+    module Objects
+      class TweetObject < Types::BaseObject
+        field :id, ID, null: false
+        field :content, String, null: false
+        field :author, Objects::UserObject, null: false
+        field :created_at, GraphQL::Types::ISO8601DateTime, null: false
+        field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
+
+        def author
+          RecordLoader.for(::User).load(object.author_id)
+        end
+      end
+    end
+  ```
