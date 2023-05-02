@@ -437,3 +437,126 @@ Implementation
       end
     end
   ```
+
+## Authentication
+
+Add in your gemfile
+
+```bash
+  gem 'graphql-batch'
+```
+
+Implementation
+
+1. Run `bundle exec rails generate graphql_devise:install`
+2. Add in your graphql schema
+  ```bash
+    class MySchema < GraphQL::Schema
+      query MyQueryType
+      mutation MyMutationType
+
+      use GraphqlDevise::SchemaPlugin.new(
+        query:            Types::QueryType,
+        mutation:         Types::MutationType,
+        resource_loaders: [
+          GraphqlDevise::ResourceLoader.new(User, authenticatable_type: Objects::UserObject)
+        ]
+      )
+    end
+  ```
+3. Add in your user model
+  ```bash
+    # app/models/user.rb
+
+    class User < ApplicationRecord
+      devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable,
+             :lockable, :validatable, :confirmable
+
+      include GraphqlDevise::Authenticatable
+      include DeviseTokenAuth::Concerns::User
+    end
+  ```
+4. Add in your routes file
+  ```bash
+    Rails.application.routes.draw do
+      mount_graphql_devise_for User, at: 'graphql_auth'
+      devise_for :users
+    end
+  ```
+5. Update the context variable in your graphql controller
+  ```bash
+    context = gql_devise_context(User)
+  ```
+6. Add in your mutation type and query type files the custom field
+  ```bash
+    module Types
+      class MutationType < BaseObject
+        field_class GraphqlDevise::Types::BaseField
+      end
+    end
+
+    module Types
+      class QueryType < Types::BaseObject
+        field_class GraphqlDevise::Types::BaseField
+      end
+    end
+  ```
+7. Include in your application controller
+  ```bash
+    class ApplicationController < ActionController::API
+      include DeviseTokenAuth::Concerns::SetUserByToken
+    end
+  ```
+
+Usage example
+
+If the user is not present the request will throw an authentication error.
+
+  ```bash
+    module Types
+      class QueryType < Types::BaseObject
+        # user field used the default set in the Plugin's initializer
+        field :user, resolver: Resolvers::UserShow
+        # this field will never require authentication
+        field :public_field, String, null: false, authenticate: false
+        # this field requires authentication
+        field :private_field, String, null: false, authenticate: true
+      end
+    end
+  ```
+
+With this gem you can use authorization
+
+  ```bash
+    module Types
+      class QueryType < Types::BaseObject
+        # this field requires authenticated users to also be admins
+        field :admin_field, String, null: false, authenticate: ->(user) { user.admin? }
+      end
+    end
+  ```
+
+Default mutations
+
+The gem has some mutations that help to perform the whole authentication process, such as registration, login, logout, etc. To use them you must add the mutation to your mutation file.
+
+  ```bash
+    class MutationType < Types::BaseObject
+      field_class GraphqlDevise::Types::BaseField
+
+      field :user_login, mutation: GraphqlDevise::Mutations::Login, authenticate: false
+    end
+  ```
+
+Test in grahpiql
+
+  ```bash
+    mutation UserLogin($email: String!, $password: String!) {
+      userLogin(
+        email: $email,
+        password: $password
+      ) {
+        credentials { accessToken uid tokenType client expiry }
+      }
+    }
+  ```
