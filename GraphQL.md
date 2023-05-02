@@ -4,9 +4,11 @@ Over the years the rest APIs became a standard for the development of any applic
 
 Taking as an example in a blogging application, an app needs to display the titles of the posts of a specific user. The same screen also displays the names of the last 3 followers of that user, using API rest we must have three endpoints, one to obtain the user information, another to list the latest posts and another to returns a list of followers per user, instead, with GraphQL obtaining the information can be done with a single query.
 
-[API rest](img/api_rest.png)
+API rest
+![API rest](img/api_rest.png)
 
-[GraphQL](img/GraphQL.png)
+GraphQL
+![GraphQL](img/GraphQL.png)
 
 ## Getting start
 
@@ -446,7 +448,7 @@ Add in your gemfile
   gem 'graphql-batch'
 ```
 
-Implementation
+### Implementation
 
 1. Run `bundle exec rails generate graphql_devise:install`
 2. Add in your graphql schema
@@ -508,7 +510,7 @@ Implementation
     end
   ```
 
-Usage example
+### Usage example
 
 If the user is not present the request will throw an authentication error.
 
